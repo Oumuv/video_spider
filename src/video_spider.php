@@ -858,8 +858,26 @@ class Video
     // 辅助函数，用于从 URL 中提取视频 ID
     private function extractId($url)
     {
-        $loc = get_headers($url, true)['Location'] ?? $url;
-        preg_match('/[0-9]+/', $loc, $id);
-        return !empty($id) ? $id[0] : null;
+        // 获取 URL 的响应头信息
+        $headers = get_headers($url, true);
+
+        // 获取重定向后的 URL，如果存在重定向
+        $locations = $headers['Location'] ?? $url;
+
+        // 如果 locations 是数组，则逐个处理，否则将其转换为数组
+        if (!is_array($locations)) {
+            $locations = [$locations];
+        }
+
+        foreach ($locations as $loc) {
+            // 使用正则表达式匹配视频 ID (假设视频 ID 是 URL 中的一部分)
+            if (preg_match('/\/video\/([0-9]+)/', $loc, $matches)) {
+                // 返回匹配的第一个捕获组
+                return $matches[1];
+            }
+        }
+
+        // 如果没有匹配到，返回 null
+        return null;
     }
 }

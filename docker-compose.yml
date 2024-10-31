@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  php_video_spider:
+    image: php:7.4-apache
+    container_name: php_video_spider
+    ports:
+      - "8090:80"
+    volumes:
+      - ./volumes/html:/var/www/html
